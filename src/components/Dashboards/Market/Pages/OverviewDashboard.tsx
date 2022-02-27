@@ -7,6 +7,7 @@ import {
   COLOR_PRIMARY_LIGHT,
   COLOR_ACCENT_1,
   COLOR_ACCENT_2,
+  COLOR_ACCENT_2_CONTRAST,
   outerCoords,
   COLOR_TOOLTIP_BACKGROUND,
 } from 'src/const';
@@ -540,6 +541,22 @@ const OverviewDashboard = ({
               title="Median Nightly Rate"
               data={dynamicADR}
               color={COLOR_ACCENT_2}
+              isDisabled={isDisabled}
+              multipleMarkersCallLoading={multipleMarkersCallLoading}
+              dynamicTrigger={dynamicTrigger}
+              setSubscriptionModalOpen={setSubscriptionModalOpen}
+            />
+          )}
+        </Grid>
+
+        <Grid item xs={12} md={4} lg={4}>
+          {listings.loading || visibleListings.loading ? (
+            <LoadingCard color={COLOR_ACCENT_2} height={150} />
+          ) : (
+            <DigestCard
+              title="Revenue"
+              data={dynamicRev}
+              color={COLOR_ACCENT_2_CONTRAST}
               isDisabled={isDisabled}
               multipleMarkersCallLoading={multipleMarkersCallLoading}
               dynamicTrigger={dynamicTrigger}

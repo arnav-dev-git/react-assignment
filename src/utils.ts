@@ -644,7 +644,36 @@ export const getDynamicOccupancyRate = (listings: Listing[]) => {
 export const getDynamicRev = (listings: Listing[]) => {
   let dynamicRev: Revenue[] = [];
   // implement this
+  let revCount: number[] = [];
 
+  if (listings.length > 0) {
+    listings[0].revenue.forEach((revObj, index) => {
+      dynamicRev[index] = {
+        date: revObj.date,
+        revenue: 0,
+      };
+      revCount[index] = 0;
+    });
+
+    listings.forEach((listing: Listing) => {
+      for (let index = 0; index < 12; index++) {
+        dynamicRev[index].date = listing.revenue[index].date;
+
+        if (listing.adr[index].adr != -1) {
+          dynamicRev[index].revenue += listing.revenue[index].revenue;
+          revCount[index] += 1;
+        }
+      }
+    });
+
+    dynamicRev.forEach((revObj, index) => {
+      if (revCount[index] != 0) {
+        revObj.revenue = Math.round(revObj.revenue / revCount[index]);
+      }
+    });
+  }
+
+  // console.log(dynamicRev);
   return dynamicRev;
 };
 

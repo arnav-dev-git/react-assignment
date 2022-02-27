@@ -21,7 +21,7 @@ import { TooltipCard } from '.';
 import InfoTooltip from '../Tooltips/InfoTooltip';
 import { infoIconStyle } from '../../Dashboards/Market/styles/style';
 import { COLOR_PRIMARY_DARK, COLOR_E, COLOR_TOOLTIP_BACKGROUND } from 'src/const';
-import { ADR, OccupancyRate } from 'src/interfaces/idashboard';
+import { ADR, OccupancyRate, Revenue } from 'src/interfaces/idashboard';
 import { DigestCardPropTypes } from 'src/interfaces/iproptypes';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -96,6 +96,9 @@ const getChangeTooltip = (title: string) => {
   if (title.includes('Median Nightly Rate')) {
     return "This month's Median Nightly Rate compared to last month's";
   }
+  if (title.includes('Revenue')) {
+    return 'Average monthly Revenue';
+  }
   return '';
 };
 
@@ -105,6 +108,9 @@ export const getYAxistName = (titleVal: string) => {
   }
   if (titleVal.includes('Median Nightly Rate')) {
     return 'Median Nightly Rate';
+  }
+  if (titleVal.includes('Revenue')) {
+    return 'Revenue';
   }
   return '';
 };
@@ -120,12 +126,16 @@ const getUnit = (titleVal: string) => {
   if (titleVal.includes('Median Nightly Rate')) {
     return '$';
   }
+  if (titleVal.includes('Revenue')) {
+    return '$';
+  }
   return '';
 };
-const parseGraphVal = (values: ADR[] | OccupancyRate[], yAxis: string, today: Date) => {
+const parseGraphVal = (values: ADR[] | OccupancyRate[] | Revenue[], yAxis: string, today: Date) => {
   let returnVal: {
     'Median Nightly Rate'?: number;
     'Occupancy Rate'?: number;
+    Revenue?: number;
     timePeriod: string;
   }[] = [];
 
@@ -169,6 +179,19 @@ const parseGraphVal = (values: ADR[] | OccupancyRate[], yAxis: string, today: Da
       });
     }
     return returnVal;
+  }
+
+  if (yAxis == 'Revenue') {
+    let revenues = values.slice(values.length - 12);
+    for (let revenueObject of revenues) {
+      returnVal.push({
+        timePeriod:
+          monthNames[parseInt(revenueObject['date'].split('-')[1]) - 1] +
+          ', ' +
+          revenueObject['date'].split('-')[0],
+        [yAxis]: revenueObject['revenue'],
+      });
+    }
   }
 
   console.log('Oops something went wrong. Check DigestCard element');
@@ -261,6 +284,14 @@ const DigestCard = ({
     rate = (averageDailyRateSum / graphData.length).toFixed(0);
   }
 
+  if (title.includes('Revenue')) {
+    let averageDailyRateSum = 0;
+    for (let x in graphData) {
+      averageDailyRateSum = averageDailyRateSum + (graphData[x]['Revenue'] as number);
+    }
+    rate = (averageDailyRateSum / graphData.length).toFixed(0);
+  }
+
   const [referPoint, referValue] = useMemo(() => {
     let referPointCalc = 0;
     let referValueCalc = 0;
@@ -301,6 +332,10 @@ const DigestCard = ({
       `The past 12 months' average occupancy rate of listings on the map.`,
       `Occupancy Rate = Number of booked days / Number of available days`,
     ],
+    Revenue: [
+      `The past 12 months' average revenue of listings on the map.`,
+      `Revenue = ((Nightly Rate + Extra Guest Fees) x Number of Booked Nights) + (Cleaning Fees x Number of bookings)`,
+    ],
   };
 
   return (
@@ -328,8 +363,10 @@ const DigestCard = ({
                 title={
                   <TooltipCard
                     title={title}
-                    content={tooltipObj[title][0]}
-                    contentAdditional={tooltipObj[title][1]}
+                    content={
+                      tooltipObj[title] ? tooltipObj[title][0] : ''
+                    } /* title checking added if the title dosen't exist */
+                    contentAdditional={tooltipObj[title] ? tooltipObj[title][1] : ' '}
                     link="https://support.airbtics.com/"
                   />
                 }
