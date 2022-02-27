@@ -646,6 +646,10 @@ export const getDynamicRev = (listings: Listing[]) => {
   // implement this
   let revCount: number[] = [];
 
+  //using forEach instead of using map as it is returning nothing
+  //and to avoid unwanted warnings
+
+  //filling the date
   if (listings.length > 0) {
     listings[0].revenue.forEach((revObj, index) => {
       dynamicRev[index] = {
@@ -655,6 +659,7 @@ export const getDynamicRev = (listings: Listing[]) => {
       revCount[index] = 0;
     });
 
+    //adding the revenue
     listings.forEach((listing: Listing) => {
       for (let index = 0; index < 12; index++) {
         dynamicRev[index].date = listing.revenue[index].date;
@@ -666,6 +671,7 @@ export const getDynamicRev = (listings: Listing[]) => {
       }
     });
 
+    //doing the average
     dynamicRev.forEach((revObj, index) => {
       if (revCount[index] != 0) {
         revObj.revenue = Math.round(revObj.revenue / revCount[index]);
@@ -673,7 +679,6 @@ export const getDynamicRev = (listings: Listing[]) => {
     });
   }
 
-  // console.log(dynamicRev);
   return dynamicRev;
 };
 

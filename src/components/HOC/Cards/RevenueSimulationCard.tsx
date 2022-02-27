@@ -475,13 +475,23 @@ const RevenueSimulationCard = ({
                                 onChange={e => handleSubfieldValueChange(subfield.key, e)}
                                 type="number"
                                 error={!subfieldValues[subfield.key]}
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      {subfield.unit}
-                                    </InputAdornment>
-                                  ),
-                                }}
+                                InputProps={
+                                  subfield.unit === '$'
+                                    ? {
+                                        startAdornment: (
+                                          <InputAdornment position="start">
+                                            {subfield.unit}
+                                          </InputAdornment>
+                                        ),
+                                      }
+                                    : {
+                                        endAdornment: (
+                                          <InputAdornment position="end">
+                                            {subfield.unit}
+                                          </InputAdornment>
+                                        ),
+                                      }
+                                }
                               />
                             </Grid>
                           ))}
