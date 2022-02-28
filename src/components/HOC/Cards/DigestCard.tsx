@@ -285,11 +285,11 @@ const DigestCard = ({
   }
 
   if (title.includes('Revenue')) {
-    let averageDailyRateSum = 0;
+    let averageMonthlyRevenueSum = 0;
     for (let x in graphData) {
-      averageDailyRateSum = averageDailyRateSum + (graphData[x]['Revenue'] as number);
+      averageMonthlyRevenueSum = averageMonthlyRevenueSum + (graphData[x]['Revenue'] as number);
     }
-    rate = (averageDailyRateSum / graphData.length).toFixed(0);
+    rate = (averageMonthlyRevenueSum / graphData.length).toFixed(0);
   }
 
   const [referPoint, referValue] = useMemo(() => {
