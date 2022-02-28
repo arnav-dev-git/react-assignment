@@ -55,6 +55,7 @@ const CustomSwitch = ({ active, setActive }: CustomSwitchPropTypes) => {
             [classes.switchActive]: active.map,
             [classes.switch]: !active.map,
           })}
+          onClick={() => setActive({ map: true, list: false })}
         >
           <LocationOnTwoToneIcon
             className={clsx({
